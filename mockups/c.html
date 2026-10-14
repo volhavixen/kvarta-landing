@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Кварта · макет C · Журнал партий</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400&family=PT+Sans:wght@400;700&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#EFE7D6;--sheet:#F8F3E6;--ink:#1F1611;--soft:#6F5B4B;--stamp:#CF3F1A;--dark:#2A1B13;--h:'PT Serif',Georgia,serif;--t:'PT Sans',system-ui,sans-serif;--m:'Roboto Mono',ui-monospace,monospace}
+*{box-sizing:border-box;margin:0}
+body{background:var(--paper);color:var(--ink);font:400 18px/1.5 var(--t);-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.w{padding:0 16px;max-width:1180px;margin:0 auto}
+.m{font-family:var(--m)}
+.cap{font:500 11px/1.3 var(--m);text-transform:uppercase;letter-spacing:.1em;color:var(--soft)}
+h1,h2,h3{font-family:var(--h);font-weight:700;line-height:1.08}
+h2{font-size:clamp(30px,5.5vw,50px)}
+.btn{display:inline-block;font:700 17px/1 var(--t);background:var(--stamp);color:#fff;border:0;padding:18px 26px;cursor:pointer;text-decoration:none;letter-spacing:.02em}
+.btn:hover{background:#B6350F}.btn:disabled{opacity:.55;cursor:wait}
+.btn.line{background:transparent;color:var(--ink);border:2px solid var(--ink)}
+/* лист-журнал: каждый блок — строка журнала */
+.sheet{background:var(--sheet);border:1.5px solid var(--ink);margin:14px auto;max-width:1180px}
+.hd{display:flex;justify-content:space-between;gap:8px;padding:8px 14px;border-bottom:1.5px solid var(--ink);font:500 11px var(--m);text-transform:uppercase;letter-spacing:.08em;background:var(--paper)}
+.bd{padding:22px 16px 28px}
+header{display:flex;justify-content:space-between;align-items:center;padding:14px 0}
+.logo{font:700 26px var(--h)}
+header a.tel{font:500 13px var(--m);text-decoration:none}
+/* hero: страница журнала */
+.log{width:100%;border-collapse:collapse;font:500 14px var(--m);margin-top:22px}
+.log th{font:500 10px var(--m);text-transform:uppercase;letter-spacing:.1em;color:var(--soft);text-align:left;padding:6px 8px;border-bottom:1.5px solid var(--ink)}
+.log td{padding:9px 8px;border-bottom:1px dashed var(--soft)}
+.log tr.now td{background:var(--stamp);color:#fff;font-weight:700;border-bottom:1.5px solid var(--ink);position:relative}
+.log tr.past{color:#9a8a7a}
+.hero h1{font-size:clamp(40px,10.5vw,92px);letter-spacing:-.02em}
+.hero h1 span{color:var(--stamp);font-style:italic;font-weight:400}
+.hero .lead{max-width:36ch;font-size:20px;margin:16px 0 24px}
+.big{display:flex;gap:16px;align-items:end;margin-top:26px}
+.bn{font:700 clamp(64px,22vw,150px)/.85 var(--m);letter-spacing:-.06em;color:var(--ink)}
+.bn small{display:block;font:500 11px var(--m);letter-spacing:.1em;color:var(--soft);text-transform:uppercase;margin-bottom:8px}
+.stampbox{border:3px solid var(--stamp);color:var(--stamp);padding:8px 12px;font:700 15px/1.2 var(--m);text-transform:uppercase;transform:rotate(-5deg);animation:st .45s .3s both cubic-bezier(.3,1.7,.5,1);letter-spacing:.05em;margin-bottom:10px}
+@keyframes st{from{transform:rotate(-5deg) scale(2.4);opacity:0}to{transform:rotate(-5deg) scale(1);opacity:1}}
+@media(prefers-reduced-motion:reduce){.stampbox{animation:none}}
+/* почему */
+.pipe{display:grid;gap:0;margin-top:22px;border:1.5px solid var(--ink)}
+.pipe>div{padding:16px;border-bottom:1.5px solid var(--ink)}.pipe>div:last-child{border:0}
+.pipe .k{font:700 34px var(--m);letter-spacing:-.04em}
+.pipe .hot{background:var(--stamp);color:#fff}
+/* сорта: накладные */
+.tags{display:grid;gap:18px;margin-top:22px}
+.tag{border:1.5px solid var(--ink);background:var(--paper);position:relative;padding:16px 16px 14px 16px;display:grid;gap:8px}
+.tag::before{content:"";position:absolute;top:12px;right:14px;width:12px;height:12px;border-radius:50%;border:1.5px solid var(--ink);background:var(--sheet)}
+.tag h3{font-size:28px;padding-right:28px}
+.tag dl{display:grid;grid-template-columns:auto 1fr;gap:3px 14px;font:400 14px var(--m)}
+.tag dt{color:var(--soft);text-transform:uppercase;font-size:11px;letter-spacing:.08em;align-self:center}
+.tag dd{margin:0}
+.tag .pf{display:flex;justify-content:space-between;align-items:center;border-top:1.5px dashed var(--ink);padding-top:10px;margin-top:4px}
+.tag .pr{font:700 26px var(--m)}
+.tag .go{font:700 14px var(--t);background:none;border:1.5px solid var(--ink);padding:9px 14px;cursor:pointer;color:var(--ink)}
+.tag .go:hover{background:var(--ink);color:var(--sheet)}
+.tag.dark{background:var(--dark);color:var(--sheet)}.tag.dark dt{color:#C7B49C}.tag.dark .go{color:var(--sheet);border-color:var(--sheet)}.tag.dark .pf{border-color:var(--sheet)}.tag.dark::before{border-color:var(--sheet);background:var(--dark)}
+.tag.dark .go:hover{background:var(--sheet);color:var(--dark)}
+/* подписка */
+.sub .bd{background:var(--dark);color:var(--sheet)}
+.sub .cap{color:#C7B49C}
+.recipe{font:500 15px/1.9 var(--m);margin:18px 0 22px}
+.recipe b{color:#FFB39B}
+.recipe .row{display:flex;justify-content:space-between;border-bottom:1px dashed #6d5a4c;padding:4px 0}
+.recipe .tot{border-bottom:0;border-top:2px solid var(--sheet);margin-top:6px;font-weight:700;font-size:20px}
+.calc{margin-top:30px;border:1.5px solid #8b7766;padding:18px}
+.calc select{width:100%;font:500 16px var(--t);padding:12px;margin:6px 0 12px;background:var(--sheet);color:var(--ink);border:0;border-radius:0}
+.calc label{font:500 11px var(--m);text-transform:uppercase;letter-spacing:.08em;color:#C7B49C}
+.calc .res{display:flex;gap:20px;margin:8px 0}.calc .res b{display:block;font:700 28px var(--m)}.calc .res span{font:500 10px var(--m);text-transform:uppercase;color:#C7B49C}
+[data-calc-state=save] [data-calc-diff]{color:#8FD694}[data-calc-state=more] [data-calc-diff]{color:#FFA48A}
+.calc [data-calc-note]{font-size:15px}
+.sub .btn{margin-top:6px}
+/* про */
+.ph{aspect-ratio:4/3;background:var(--paper);border:1.5px solid var(--ink);display:grid;place-content:center;text-align:center;font:500 11px var(--m);color:var(--soft);margin-bottom:18px}
+.sign{font:italic 400 28px var(--h);color:var(--stamp);margin-top:14px}
+/* доставка */
+.dl{display:grid;gap:18px;margin-top:18px}
+.hours{width:100%;border-collapse:collapse;font:500 15px var(--m)}
+.hours td{padding:9px 0;border-bottom:1px dashed var(--soft)}.hours td:last-child{text-align:right}
+.hours caption{text-align:left}
+/* форма */
+.f{margin-bottom:18px}
+.f>label,.f>.lb{display:block;font:500 11px var(--m);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;color:var(--soft)}
+input[type=text],input[type=tel],textarea{width:100%;font:400 19px var(--t);padding:12px 2px;border:0;border-bottom:2px solid var(--ink);background:transparent;border-radius:0;color:var(--ink)}
+textarea{min-height:84px;resize:vertical;border:2px solid var(--ink);padding:10px}
+input:focus,textarea:focus{outline:0;border-color:var(--stamp);background:#FFF9E8}
+.is-invalid{border-color:var(--stamp)!important;background:#FBE4DB!important}
+.hint{font:400 12px var(--m);color:var(--soft);margin-top:6px}
+.err{font:700 14px/1.35 var(--t);color:#A7300F;margin-top:6px}
+.rad{display:grid;gap:8px}
+.rad label{display:flex;gap:12px;align-items:center;padding:12px;border:1.5px solid var(--ink);cursor:pointer;font:700 16px var(--t)}
+.rad input{accent-color:var(--stamp);width:20px;height:20px}
+.rad label:has(input:checked){background:var(--ink);color:var(--sheet)}
+.ok h3{font-size:34px;margin:8px 0 10px}
+.ok .rcpt{font:500 14px/1.8 var(--m);border:1.5px dashed var(--ink);padding:14px;margin:14px 0}
+.bad{border:2px solid var(--stamp);padding:16px}.bad h3{font-size:26px;color:#A7300F;margin-bottom:6px}.bad p{margin-bottom:8px}
+footer{padding:20px 0 40px;font:500 11px var(--m);color:var(--soft);display:flex;flex-wrap:wrap;gap:6px 20px;text-transform:uppercase;letter-spacing:.06em}
+@media(min-width:900px){
+ .w{padding:0 40px}.bd{padding:44px 48px 52px}
+ .hero .cols{display:grid;grid-template-columns:1.3fr 1fr;gap:64px;align-items:end}
+ .log{margin-top:0}
+ .pipe{grid-template-columns:1fr 1fr 2fr}.pipe>div{border-bottom:0;border-right:1.5px solid var(--ink)}.pipe>div:last-child{border-right:0}
+ .tags{grid-template-columns:1fr 1fr 1fr;gap:24px}
+ .tag.wide{grid-column:1/4;grid-template-columns:1.2fr 1.5fr 1fr;align-items:center}
+ .tag:nth-child(1){transform:rotate(-.6deg)}.tag:nth-child(3){transform:rotate(.6deg)}
+ .sub .bd{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:start}
+ .calc{margin-top:0}
+ .ab{display:grid;grid-template-columns:5fr 6fr;gap:64px;align-items:center}.ph{margin:0}
+ .dl{grid-template-columns:1fr 1fr 1fr;gap:48px}
+ .fm{display:grid;grid-template-columns:5fr 6fr;gap:64px}
+}
+</style>
+</head>
+<body>
+<div class="w"><header><div class="logo">Кварта</div><a class="tel" href="tel:+375290000000">+375 29 000-00-00</a></header></div>
+
+<div class="sheet hero">
+ <div class="hd"><span>Журнал обжарки</span><span>Партия <span data-roast="batch">№ 42-26</span></span></div>
+ <div class="bd"><div class="cols">
+  <div>
+   <h1>Обжарка <span data-roast="when">в четверг</span>.<br>К вам — в пятницу.</h1>
+   <p class="lead">Зерно приезжает на 1–3 день после обжарки. Партии по 5 кг, с 2019 года.</p>
+   <a class="btn" href="#form" data-pick-type="subscription">Оставить заявку</a>
+   <div class="big"><div class="bn"><small>Дата обжарки</small><span data-roast="dm">15.10</span></div><div class="stampbox">Партия<br>5 кг</div></div>
+  </div>
+  <table class="log" aria-label="График партии">
+   <thead><tr><th>День</th><th>Что</th><th>Дата</th></tr></thead>
+   <tbody>
+    <tr class="now"><td>чт · 0</td><td>обжарка</td><td data-roast="dm">15.10</td></tr>
+    <tr><td>пт · 1</td><td>развозим</td><td data-roast="d1">16.10</td></tr>
+    <tr><td>сб · 2</td><td>пьёте</td><td data-roast="d2">17.10</td></tr>
+    <tr><td>вс · 3</td><td>пьёте</td><td data-roast="d3">18.10</td></tr>
+   </tbody>
+  </table>
+ </div></div>
+</div>
+
+<div class="sheet" id="fresh">
+ <div class="hd"><span>01 · Свежесть</span><span>3 дня</span></div>
+ <div class="bd">
+  <h2>Дата на пачке не для красоты</h2>
+  <p style="margin-top:14px;max-width:48ch">Обжаренное зерно теряет аромат с каждой неделей. Поэтому на каждой пачке стоят дата обжарки и номер партии, а сама пачка у вас на 1–3 день.</p>
+  <div class="pipe">
+   <div class="hot"><div class="k">0</div>четверг: обжарка</div>
+   <div><div class="k">1</div>пятница: доставка</div>
+   <div><div class="k">2–3</div>выходные: у вас на кухне, пока кофе в лучшей форме</div>
+  </div>
+ </div>
+</div>
+
+<div class="sheet" id="beans">
+ <div class="hd"><span>02 · Зерно</span><span>250 г</span></div>
+ <div class="bd">
+  <h2>Что в этой партии</h2>
+  <div class="tags">
+   <article class="tag"><span class="cap">Эфиопия</span><h3>Иргачеффе</h3><dl><dt>Ноты</dt><dd>цветочный, бергамот</dd><dt>Обжарка</dt><dd>светлая</dd></dl><div class="pf"><span class="pr">32 BYN</span><button class="go" data-pick-type="once" data-pick-note="Эфиопия Иргачеффе">Заказать</button></div></article>
+   <article class="tag"><span class="cap">Колумбия</span><h3>Уила</h3><dl><dt>Ноты</dt><dd>карамель, красное яблоко</dd><dt>Обжарка</dt><dd>средняя</dd></dl><div class="pf"><span class="pr">29 BYN</span><button class="go" data-pick-type="once" data-pick-note="Колумбия Уила">Заказать</button></div></article>
+   <article class="tag dark"><span class="cap" style="color:#C7B49C">Бразилия</span><h3>Серрадо</h3><dl><dt>Ноты</dt><dd>орех, шоколад</dd><dt>Обжарка</dt><dd>под эспрессо</dd></dl><div class="pf"><span class="pr">26 BYN</span><button class="go" data-pick-type="once" data-pick-note="Бразилия Серрадо">Заказать</button></div></article>
+   <article class="tag wide"><div><span class="cap">Без кофемашины</span><h3>Дрип-пакеты</h3></div><dl><dt>В коробке</dt><dd>10 штук, ассорти</dd><dt>Нужно</dt><dd>кружка и кипяток</dd></dl><div class="pf" style="border:0;padding:0"><span class="pr">18 BYN</span><button class="go" data-pick-type="once" data-pick-note="Дрип-пакеты">Заказать</button></div></article>
+  </div>
+ </div>
+</div>
+
+<div class="sheet sub" id="sub">
+ <div class="hd"><span>03 · Подписка</span><span>раз в месяц</span></div>
+ <div class="bd">
+  <div>
+   <h2>Подписка: чек за месяц</h2>
+   <div class="recipe">
+    <div class="row"><span>2 × кофе, 250 г</span><span>на выбор</span></div>
+    <div class="row"><span>Доставка по Минску</span><span><b>0 BYN</b></span></div>
+    <div class="row"><span>Цена одна на любые сорта</span><span></span></div>
+    <div class="row tot"><span>Итого</span><span>54 BYN / мес</span></div>
+   </div>
+   <a class="btn" href="#form" data-pick-type="subscription">Оформить подписку</a>
+  </div>
+  <div class="calc" data-calc>
+   <p class="cap" style="margin-bottom:12px">Разово или подпиской?</p>
+   <label>Первая пачка<select data-calc-a><option value="32">Эфиопия Иргачеффе · 32</option><option value="29">Колумбия Уила · 29</option><option value="26">Бразилия Серрадо · 26</option></select></label>
+   <label>Вторая пачка<select data-calc-b><option value="32">Эфиопия Иргачеффе · 32</option><option value="29" selected>Колумбия Уила · 29</option><option value="26">Бразилия Серрадо · 26</option></select></label>
+   <div class="res"><div><b data-calc-once>61</b><span>разово</span></div><div><b data-calc-sub>54</b><span>подписка</span></div><div><b data-calc-diff>−7</b><span>разница</span></div></div>
+   <p data-calc-note></p>
+  </div>
+ </div>
+</div>
+
+<div class="sheet" id="about">
+ <div class="hd"><span>04 · Обжарщики</span><span>Аня + Дмитрий</span></div>
+ <div class="bd ab">
+  <div class="ph" role="img" aria-label="Фото ростера">фото ростера (Unsplash)</div>
+  <div><h2>Аня и Дмитрий</h2><p style="margin-top:14px;max-width:44ch">Бывшие бариста. Поставили ростер на 5 кг и обжаривают сами с 2019 года. Партию пишут в журнал, а номер партии ставят на пачку.</p><p class="sign">Аня и Дмитрий</p></div>
+ </div>
+</div>
+
+<div class="sheet" id="delivery">
+ <div class="hd"><span>05 · Доставка</span><span>пятница</span></div>
+ <div class="bd">
+  <h2>Пятница по Минску</h2>
+  <div class="dl">
+   <div><h3 style="font-size:24px;margin-bottom:6px">Доставка</h3><p>Бесплатно от 50 BYN. Если заказ меньше, менеджер назовёт стоимость.</p></div>
+   <div><h3 style="font-size:24px;margin-bottom:6px">Самовывоз</h3><p>Минск, ул. Короля, 9. Лучше позвонить перед приездом.</p></div>
+   <table class="hours"><caption class="cap">Часы работы</caption><tr><td>пн–пт</td><td>8:00–20:00</td></tr><tr><td>сб–вс</td><td>10:00–18:00</td></tr></table>
+  </div>
+ </div>
+</div>
+
+<div class="sheet" id="form">
+ <div class="hd"><span>06 · Заявка</span><span>перезвоним</span></div>
+ <div class="bd fm">
+  <div><h2>Оставьте заявку</h2><p style="margin-top:14px;max-width:34ch">Менеджер перезвонит, уточнит сорта и день доставки. Оплата не нужна.</p></div>
+  <form id="lead" novalidate>
+   <div data-show="form-body">
+    <div class="f"><label for="n">Имя</label><input id="n" type="text" name="name" autocomplete="given-name" required></div>
+    <div class="f"><label for="p">Телефон</label><input id="p" type="tel" name="phone" inputmode="tel" autocomplete="tel" placeholder="+375 (29) 123-45-67" aria-describedby="ph ph-e"><p class="hint" id="ph">+375 и 9 цифр: код оператора и номер.</p><p class="err" id="ph-e" data-phone-error hidden></p></div>
+    <div class="f"><span class="lb">Что интересует</span><div class="rad"><label><input type="radio" name="type" value="subscription" checked>Подписка</label><label><input type="radio" name="type" value="once">Разовый заказ</label><label><input type="radio" name="type" value="question">Вопрос</label></div></div>
+    <div class="f"><label for="c">Комментарий</label><textarea id="c" name="comment"></textarea></div>
+    <button class="btn" type="submit" data-submit style="width:100%"><span data-submit-label>Оставить заявку</span></button>
+   </div>
+   <div data-show="success" hidden class="ok"><span class="cap">Принято</span><h3>Спасибо, <span data-echo-name></span>.</h3><div class="rcpt">Заявка записана<br>Номер: <span data-echo-phone></span><br>Перезвоним: <span data-callback></span></div><button type="button" class="btn line" data-reset>Ещё одна заявка</button></div>
+   <div data-show="error" hidden class="bad"><h3>Заявка не ушла</h3><p>Попробуйте ещё раз. Если снова не получится, позвоните или приезжайте: оформим на месте.</p><p class="m"><b>+375 29 000-00-00</b><br>Минск, ул. Короля, 9<br>пн–пт 8–20, сб–вс 10–18</p><button type="button" class="btn" data-retry>Повторить</button></div>
+  </form>
+ </div>
+</div>
+<div class="w"><footer><span>Кварта · обжарка</span><span>Минск, ул. Короля, 9</span><span>Партия <span data-roast="batch"></span></span></footer></div>
+<script src="common.js"></script>
+</body>
+</html>

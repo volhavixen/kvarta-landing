@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Кварта · макет B · Неделя обжарки</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geologica:wght@300;500;800&family=Onest:wght@400;500;600&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#F7F2E7;--cell:#EFE6D2;--ink:#241711;--soft:#75604F;--stamp:#E0481F;--line:#241711;
+--h:'Geologica',system-ui,sans-serif;--t:'Onest',system-ui,sans-serif;--m:'Spline Sans Mono',ui-monospace,monospace}
+*{box-sizing:border-box;margin:0}
+body{background:var(--paper);color:var(--ink);font:400 17px/1.5 var(--t);-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.w{padding:0 18px;max-width:1360px;margin:0 auto}
+.cap{font:500 12px/1.3 var(--m);text-transform:uppercase;letter-spacing:.08em;color:var(--soft)}
+h1,h2,h3{font-family:var(--h);font-weight:800;line-height:1.02;letter-spacing:-.025em}
+h2{font-size:clamp(30px,6vw,56px)}
+.btn{display:inline-flex;align-items:center;gap:10px;font:600 17px/1 var(--t);background:var(--ink);color:var(--paper);border:0;padding:18px 26px;border-radius:999px;cursor:pointer;text-decoration:none}
+.btn.hot{background:var(--stamp);color:#fff}
+.btn:hover{filter:brightness(1.12)}
+.btn:disabled{opacity:.55;cursor:wait}
+/* верхняя полоса «сегодня» */
+.ticker{background:var(--ink);color:var(--paper);font:500 12px var(--m);padding:9px 0;letter-spacing:.04em}
+.ticker .w{display:flex;justify-content:space-between;gap:10px}
+header{display:flex;justify-content:space-between;align-items:center;padding:18px 0}
+.logo{font:800 26px var(--h);letter-spacing:-.04em}
+nav{display:none}
+/* hero: неделя */
+.hero h1{font-size:clamp(42px,12vw,120px);font-weight:300;letter-spacing:-.04em}
+.hero h1 b{font-weight:800}
+.hero .lead{margin:18px 0 24px;max-width:34ch;font-size:19px}
+.cal{margin-top:34px;display:grid;border:1.5px solid var(--line);background:var(--paper)}
+.day{display:grid;grid-template-columns:64px 1fr auto;align-items:center;gap:12px;padding:14px 14px;border-bottom:1.5px solid var(--line);font:500 14px var(--m)}
+.day:last-child{border:0}
+.day .n{font:800 26px var(--h);letter-spacing:-.04em}
+.day .t{font:400 15px var(--t)}
+.day.idle{color:#9b8a7a}
+.day.idle .n{font-weight:300}
+.day.r{background:var(--stamp);color:#fff;padding:22px 14px}
+.day.r .n{font-size:40px}
+.day.r .t{font:600 18px var(--t)}
+.day.f{background:var(--cell)}
+.day .tag{font:600 11px var(--m);text-transform:uppercase;letter-spacing:.06em;border:1.5px solid currentColor;padding:3px 7px;border-radius:99px;white-space:nowrap}
+.day.r .tag{animation:pop .5s .3s both cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{from{transform:scale(0) rotate(-20deg)}to{transform:scale(1) rotate(0)}}
+@media(prefers-reduced-motion:reduce){.day.r .tag{animation:none}}
+.meta3{display:flex;flex-wrap:wrap;gap:6px 24px;margin-top:14px;font:500 13px var(--m);color:var(--soft)}
+section{padding:64px 0}
+.sh{display:grid;gap:10px;margin-bottom:30px}
+.sh .num{font:600 13px var(--m);color:var(--stamp)}
+/* почему */
+.why p{max-width:46ch;font-size:19px}
+.age{display:flex;margin-top:30px;height:54px;border:1.5px solid var(--line)}
+.age div{display:flex;align-items:center;justify-content:center;font:600 12px var(--m);border-right:1.5px solid var(--line)}
+.age div:last-child{border:0}
+.age .a1{flex:0 0 14%;background:var(--stamp);color:#fff}
+.age .a2{flex:0 0 22%;background:var(--cell)}
+.age .a3{flex:1;color:var(--soft)}
+.agel{display:flex;font:500 11px var(--m);color:var(--soft);margin-top:6px;justify-content:space-between}
+/* прайс-расписание */
+.menu{border-top:1.5px solid var(--line)}
+.item{display:grid;grid-template-columns:1fr auto;gap:2px 14px;padding:22px 0;border-bottom:1.5px solid var(--line);align-items:baseline}
+.item h3{font-size:clamp(26px,5vw,44px)}
+.item .nt{grid-column:1/2;color:var(--soft);font-size:16px}
+.item .pr{font:600 24px var(--m);grid-row:1;grid-column:2;text-align:right}
+.item .ctl{grid-column:1/3;display:flex;gap:14px;align-items:center;margin-top:10px;font:500 12px var(--m);color:var(--soft);text-transform:uppercase}
+.item .go{font:600 14px var(--t);text-transform:none;border:1.5px solid var(--ink);background:none;border-radius:99px;padding:8px 16px;cursor:pointer;color:var(--ink)}
+.item .go:hover{background:var(--ink);color:var(--paper)}
+.dots{display:inline-flex;gap:4px}.dots i{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--ink)}.dots i.on{background:var(--ink)}
+/* подписка */
+.sub{background:var(--stamp);color:#fff}
+.sub .cap{color:#FFD9CB}
+.month{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:26px 0;border:1.5px solid #fff}
+.month div{padding:10px 8px 12px;border-right:1.5px solid #fff;font:500 12px var(--m)}
+.month div:last-child{border:0}
+.month b{display:block;font:800 22px var(--h);margin:4px 0}
+.month .pk{display:flex;gap:4px}.month .pk i{width:18px;height:26px;background:#fff;border-radius:2px 2px 4px 4px}
+.sub .price{font:800 clamp(72px,20vw,168px)/.9 var(--h);letter-spacing:-.06em}
+.sub .price small{font:500 16px var(--m);letter-spacing:0;margin-left:8px}
+.sub .btn{background:#fff;color:var(--ink)}
+.calc{margin-top:36px;background:var(--paper);color:var(--ink);padding:22px}
+.calc .cap{color:var(--soft)}
+.calc .pair{display:grid;gap:10px;margin:14px 0}
+.calc select{width:100%;font:500 17px var(--t);padding:13px;border:1.5px solid var(--ink);background:var(--paper);color:var(--ink);border-radius:0}
+.calc .res{display:flex;gap:22px;align-items:baseline;flex-wrap:wrap;margin:6px 0 8px}
+.calc .res b{font:600 30px var(--m)}.calc .res span{font:500 11px var(--m);color:var(--soft);text-transform:uppercase;display:block}
+[data-calc-state=save] [data-calc-diff]{color:#1B7A3E}[data-calc-state=more] [data-calc-diff]{color:#B3260B}
+.calc [data-calc-note]{font-size:15px}
+/* про */
+.about{display:grid;gap:26px}
+.ph{aspect-ratio:3/2;background:var(--cell);border:1.5px solid var(--ink);display:grid;place-content:center;text-align:center;font:500 12px var(--m);color:var(--soft)}
+.about blockquote{font:300 clamp(24px,4vw,38px)/1.2 var(--h);letter-spacing:-.02em}
+.about blockquote b{font-weight:800}
+/* доставка */
+.dg{display:grid;gap:0;border:1.5px solid var(--line)}
+.dg>div{padding:22px;border-bottom:1.5px solid var(--line)}.dg>div:last-child{border:0}
+.dg h3{font-size:28px;margin-bottom:8px}
+.hours{width:100%;border-collapse:collapse;font:500 15px var(--m)}
+.hours td{padding:8px 0;border-bottom:1px dashed var(--soft)}.hours td:last-child{text-align:right}
+/* форма */
+.fw{display:grid;gap:28px}
+form{background:var(--cell);padding:22px;border:1.5px solid var(--ink)}
+.f{margin-bottom:18px}
+.f>label,.f>.lb{display:block;font:500 12px var(--m);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px}
+input[type=text],input[type=tel],textarea{width:100%;font:400 18px var(--t);padding:14px;border:1.5px solid var(--ink);background:var(--paper);border-radius:0;color:var(--ink)}
+textarea{min-height:90px;resize:vertical}
+input:focus,textarea:focus,select:focus{outline:3px solid var(--stamp);outline-offset:1px}
+.is-invalid{border-color:var(--stamp)!important;box-shadow:inset 4px 0 0 var(--stamp)}
+.hint{font:400 13px var(--m);color:var(--soft);margin-top:6px}
+.err{font:500 14px/1.35 var(--t);color:#A52A0B;margin-top:7px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips label{position:relative;cursor:pointer}.chips input{position:absolute;opacity:0}
+.chips span{display:block;padding:11px 16px;border:1.5px solid var(--ink);border-radius:99px;font:500 15px var(--t)}
+.chips input:checked+span{background:var(--ink);color:var(--paper)}
+.chips input:focus-visible+span{outline:3px solid var(--stamp);outline-offset:2px}
+.ok h3{font-size:34px;margin:8px 0 10px}
+.bad{border:1.5px solid var(--stamp);background:var(--paper);padding:18px}.bad h3{font-size:26px;margin-bottom:6px;color:#A52A0B}.bad p{margin-bottom:8px}
+footer{padding:24px 0 40px;border-top:1.5px solid var(--ink);font:500 12px var(--m);color:var(--soft);display:flex;flex-wrap:wrap;gap:6px 22px}
+@media(min-width:900px){
+ .w{padding:0 56px}
+ nav{display:flex;gap:28px;font:500 14px var(--m)}nav a{text-decoration:none}nav a:hover{color:var(--stamp)}
+ .hero{padding-top:30px}
+ .cal{grid-template-columns:1fr 1fr 1fr 1.9fr 1.3fr 1fr 1fr;margin-top:56px}
+ .day{display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;min-height:300px;padding:16px;border-bottom:0;border-right:1.5px solid var(--line);gap:8px}
+ .day:last-child{border-right:0}
+ .day.r{padding:20px 20px 24px}.day.r .n{font-size:84px}.day.r .t{font-size:22px;line-height:1.2}
+ .day .n{font-size:40px}
+ .day .t{font-size:14px}
+ section{padding:104px 0}
+ .sh{grid-template-columns:120px 1fr;gap:20px;align-items:baseline}
+ .why{display:grid;grid-template-columns:5fr 7fr;gap:80px}
+ .item{grid-template-columns:3fr 4fr auto auto;gap:24px;align-items:center;padding:30px 0}
+ .item .nt{grid-column:2;grid-row:1}.item .pr{grid-column:3;grid-row:1;font-size:30px;min-width:120px}
+ .item .ctl{grid-column:4;grid-row:1;margin:0}
+ .item h3{grid-column:1}
+ .sub-g{display:grid;grid-template-columns:1.1fr .9fr;gap:80px;align-items:start}
+ .calc{margin-top:0}
+ .about{grid-template-columns:5fr 7fr;gap:80px;align-items:center}
+ .dg{grid-template-columns:1fr 1fr 1fr}.dg>div{border-bottom:0;border-right:1.5px solid var(--line)}.dg>div:last-child{border-right:0}
+ .fw{grid-template-columns:5fr 7fr;gap:80px}
+ form{padding:36px}
+}
+</style>
+</head>
+<body>
+<div class="ticker"><div class="w"><span>Ближайшая обжарка: <b data-roast="date">15 октября</b>, чт</span><span>Партия <span data-roast="batch">№ 42-26</span> · 5 кг</span></div></div>
+<div class="w">
+<header><div class="logo">кварта</div><nav><a href="#why">Свежесть</a><a href="#beans">Зерно</a><a href="#sub">Подписка</a><a href="#delivery">Доставка</a><a href="#form">Заявка</a></nav></header>
+<div class="hero">
+ <p class="cap" style="margin-bottom:14px">Обжарка · Минск · с 2019</p>
+ <h1><b>Четверг</b> —<br>обжарка. Пятница —<br>у вас.</h1>
+ <p class="lead">Кофе приезжает на 1–3 день после обжарки. Одна партия в неделю, 5 кг.</p>
+ <a class="btn hot" href="#form" data-pick-type="subscription">Оставить заявку <span aria-hidden="true">→</span></a>
+ <div class="cal" role="list" aria-label="Неделя обжарки">
+  <div class="day idle" role="listitem"><span class="n">пн</span><span class="t">Принимаем заявки</span></div>
+  <div class="day idle" role="listitem"><span class="n">вт</span><span class="t">Готовим зерно</span></div>
+  <div class="day idle" role="listitem"><span class="n">ср</span><span class="t">Собираем заказы</span></div>
+  <div class="day r" role="listitem"><span class="n">чт</span><span class="t">Обжарка.<br>Партия 5 кг</span><span class="tag">день 0</span></div>
+  <div class="day f" role="listitem"><span class="n">пт</span><span class="t">Везём по Минску</span><span class="tag">день 1</span></div>
+  <div class="day f" role="listitem"><span class="n">сб</span><span class="t">Пьёте</span><span class="tag">день 2</span></div>
+  <div class="day f" role="listitem"><span class="n">вс</span><span class="t">Пьёте</span><span class="tag">день 3</span></div>
+ </div>
+ <div class="meta3"><span>Эта неделя: обжарка <b data-roast="dm">15.10</b></span><span>Доставка <b data-roast="fridm">16.10</b></span><span>Дни 1–3: <span data-roast="d1">16.10</span>–<span data-roast="d3">18.10</span></span></div>
+</div>
+</div>
+
+<section id="why"><div class="w">
+ <div class="sh"><span class="num">01</span><h2>Зачем считать дни</h2></div>
+ <div class="why">
+  <p>Обжаренный кофе теряет аромат с каждой неделей. Поэтому мы не держим склад: обжариваем под заказы и сразу развозим. В магазине вы не знаете, когда обжарили. У нас знаете: на пачке стоит дата.</p>
+  <div><div class="age"><div class="a1">1–3</div><div class="a2">4–14</div><div class="a3">дальше аромат слабее</div></div><div class="agel"><span>дни после обжарки</span><span>→</span></div></div>
+ </div>
+</div></section>
+
+<section id="beans" style="padding-top:0"><div class="w">
+ <div class="sh"><span class="num">02</span><h2>Зерно</h2></div>
+ <div class="menu">
+  <div class="item"><h3>Эфиопия Иргачеффе</h3><p class="nt">цветочный, бергамот · светлая обжарка · 250 г</p><span class="pr">32 BYN</span><div class="ctl"><span class="dots" title="светлая"><i class="on"></i><i></i><i></i><i></i></span><button class="go" data-pick-type="once" data-pick-note="Эфиопия Иргачеффе">Заказать</button></div></div>
+  <div class="item"><h3>Колумбия Уила</h3><p class="nt">карамель, красное яблоко · средняя обжарка · 250 г</p><span class="pr">29 BYN</span><div class="ctl"><span class="dots" title="средняя"><i class="on"></i><i class="on"></i><i></i><i></i></span><button class="go" data-pick-type="once" data-pick-note="Колумбия Уила">Заказать</button></div></div>
+  <div class="item"><h3>Бразилия Серрадо</h3><p class="nt">орех, шоколад · под эспрессо · 250 г</p><span class="pr">26 BYN</span><div class="ctl"><span class="dots" title="тёмная"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span><button class="go" data-pick-type="once" data-pick-note="Бразилия Серрадо">Заказать</button></div></div>
+  <div class="item"><h3>Дрип-пакеты</h3><p class="nt">ассорти · 10 штук</p><span class="pr">18 BYN</span><div class="ctl"><button class="go" data-pick-type="once" data-pick-note="Дрип-пакеты">Заказать</button></div></div>
+ </div>
+</div></section>
+
+<section class="sub" id="sub"><div class="w"><div class="sub-g">
+ <div>
+  <p class="cap">03 · Подписка</p>
+  <div class="price">54<small>BYN / мес</small></div>
+  <h2 style="margin:12px 0 0;font-size:clamp(26px,4vw,40px)">Две пачки по 250 г, раз в месяц</h2>
+  <div class="month" aria-label="Месяц подписки"><div>пт<b data-roast="fridm">16.10</b><span class="pk"><i></i><i></i></span></div><div>пт<b>·</b>-</div><div>пт<b>·</b>-</div><div>пт<b>·</b>-</div></div>
+  <p style="max-width:40ch;margin-bottom:22px">Раз в месяц в пятницу к вам приезжают две свежие пачки. Доставка бесплатная. Сорта выбираете сами.</p>
+  <a class="btn" href="#form" data-pick-type="subscription">Оформить подписку</a>
+ </div>
+ <div class="calc" data-calc>
+  <p class="cap">Сравните с разовым заказом</p>
+  <div class="pair"><select data-calc-a aria-label="Первая пачка"><option value="32">Эфиопия Иргачеффе · 32</option><option value="29">Колумбия Уила · 29</option><option value="26">Бразилия Серрадо · 26</option></select><select data-calc-b aria-label="Вторая пачка"><option value="32">Эфиопия Иргачеффе · 32</option><option value="29" selected>Колумбия Уила · 29</option><option value="26">Бразилия Серрадо · 26</option></select></div>
+  <div class="res"><div><b data-calc-once>61</b><span>BYN разово</span></div><div><b data-calc-sub>54</b><span>BYN подписка</span></div><div><b data-calc-diff>−7</b><span>BYN разница</span></div></div>
+  <p data-calc-note></p>
+ </div>
+</div></div></section>
+
+<section id="about"><div class="w">
+ <div class="sh"><span class="num">04</span><h2>Аня и Дмитрий</h2></div>
+ <div class="about">
+  <div class="ph" role="img" aria-label="Фото ростера">фото ростера (Unsplash)</div>
+  <blockquote>Мы были бариста и знаем, как <b>уставший кофе</b> выглядит в чашке. Теперь обжариваем сами: <b>5 кг</b> по четвергам и в пятницу к вам.</blockquote>
+ </div>
+</div></section>
+
+<section id="delivery" style="padding-top:0"><div class="w">
+ <div class="sh"><span class="num">05</span><h2>Доставка и самовывоз</h2></div>
+ <div class="dg">
+  <div><h3>Пятница, Минск</h3><p>Бесплатно от 50 BYN. Если заказ меньше, менеджер назовёт стоимость.</p></div>
+  <div><h3>Самовывоз</h3><p>ул. Короля, 9. Приезжайте в часы работы, лучше предупредите заранее.</p></div>
+  <div><table class="hours"><tr><td>пн–пт</td><td>8:00–20:00</td></tr><tr><td>сб–вс</td><td>10:00–18:00</td></tr></table></div>
+ </div>
+</div></section>
+
+<section id="form" style="padding-top:0"><div class="w fw">
+ <div><div class="sh" style="margin:0"><span class="num">06</span><h2>Заявка</h2></div><p style="margin-top:18px;max-width:32ch">Оставьте номер, менеджер перезвонит, уточнит сорта и день доставки. Платить сейчас не нужно.</p></div>
+ <form id="lead" novalidate>
+  <div data-show="form-body">
+   <div class="f"><label for="n">Имя</label><input id="n" type="text" name="name" autocomplete="given-name" required></div>
+   <div class="f"><label for="p">Телефон</label><input id="p" type="tel" name="phone" inputmode="tel" autocomplete="tel" placeholder="+375 (29) 123-45-67" aria-describedby="ph ph-e"><p class="hint" id="ph">Белорусский номер, например +375 29 123-45-67.</p><p class="err" id="ph-e" data-phone-error hidden></p></div>
+   <div class="f"><span class="lb">Что интересует</span><div class="chips"><label><input type="radio" name="type" value="subscription" checked><span>Подписка</span></label><label><input type="radio" name="type" value="once"><span>Разовый заказ</span></label><label><input type="radio" name="type" value="question"><span>Вопрос</span></label></div></div>
+   <div class="f"><label for="c">Комментарий</label><textarea id="c" name="comment"></textarea></div>
+   <button class="btn hot" type="submit" data-submit style="width:100%;justify-content:center"><span data-submit-label>Оставить заявку</span></button>
+  </div>
+  <div data-show="success" hidden class="ok"><span class="cap">Заявка принята</span><h3>Спасибо, <span data-echo-name></span>.</h3><p>Перезвоним на <b data-echo-phone></b> <span data-callback></span></p><button type="button" class="btn" style="margin-top:18px" data-reset>Ещё одна заявка</button></div>
+  <div data-show="error" hidden class="bad"><h3>Заявка не отправилась</h3><p>Попробуйте ещё раз. Если не выйдет, позвоните или приезжайте, оформим на месте.</p><p><b>+375 29 000-00-00</b><br>Минск, ул. Короля, 9 · пн–пт 8–20, сб–вс 10–18</p><button type="button" class="btn hot" data-retry>Повторить</button></div>
+ </form>
+</div></section>
+<div class="w"><footer><span>Кварта · обжарка</span><span>Минск, ул. Короля, 9</span><span>Партия <span data-roast="batch"></span></span></footer></div>
+<script src="common.js"></script>
+</body>
+</html>

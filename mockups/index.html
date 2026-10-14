@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Кварта · структура и макеты</title>
+<style>
+:root{--paper:#F4EEDF;--ink:#2B1B13;--soft:#6B5648;--stamp:#D5421E;--kraft:#DCC7A3}
+*{box-sizing:border-box;margin:0}
+body{background:var(--paper);color:var(--ink);font:17px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;padding:0 18px 60px}
+main{max-width:920px;margin:0 auto}
+h1{font:800 clamp(34px,7vw,56px)/1.05 Georgia,serif;margin:36px 0 10px}
+h2{font:800 28px/1.1 Georgia,serif;margin:44px 0 14px}
+.m,.cap{font:500 12px ui-monospace,Menlo,monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--soft)}
+ol.blocks{list-style:none;padding:0;border-top:1.5px solid var(--ink)}
+ol.blocks li{display:grid;grid-template-columns:34px 1fr;gap:10px;padding:16px 0;border-bottom:1px dashed var(--soft)}
+ol.blocks .n{font:700 15px ui-monospace,monospace;color:var(--stamp)}
+ol.blocks b{display:block}
+ol.blocks span.w{color:var(--soft);font-size:15px}
+.vars{display:grid;gap:16px}
+.v{border:2px solid var(--ink);background:var(--kraft);padding:18px;text-decoration:none;display:block}
+.v h3{font:800 26px Georgia,serif;margin:4px 0 8px}
+.v p{font-size:15px;margin-bottom:6px}
+.v .go{font:700 14px system-ui;color:var(--stamp)}
+.v:hover{background:#E7D5B5}
+ul.rules{padding-left:20px;display:grid;gap:6px}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th,.tbl td{padding:9px 8px;border-bottom:1px solid #c9b79a;text-align:left;vertical-align:top}
+.tbl th{font:500 11px ui-monospace,monospace;text-transform:uppercase;color:var(--soft)}
+@media(min-width:800px){.vars{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body><main>
+<p class="m" style="margin-top:24px">Кварта · лендинг · ход работы</p>
+<h1>Структура и четыре макета</h1>
+<p>Все макеты рабочие: дата ближайшей обжарки считается от сегодняшнего дня, расчёт подписки и форма с состояниями (кнопка «имитировать сбой» в верхней панели) одинаковые. Различается только дизайн. Смотрите на ширине 375 и 1440.</p>
+
+<h2>Макеты</h2>
+<div class="vars">
+ <a class="v" href="a.html"><span class="m">A</span><h3>Этикетка партии</h3><p>Первый экран строится вокруг крафтовой этикетки со штампом даты. Сорта как бирки разного размера и наклона. Заголовки антиквой, цены моноширинным.</p><p class="m">Alegreya · Golos Text · IBM Plex Mono</p><span class="go">Открыть →</span></a>
+ <a class="v" href="b.html"><span class="m">B</span><h3>Неделя обжарки</h3><p>Герой: семь колонок недели, четверг выделен красным. Сорта как строки расписания, а не карточки. Спокойнее и «вёрстче» остальных.</p><p class="m">Geologica · Onest · Spline Sans Mono</p><span class="go">Открыть →</span></a>
+ <a class="v" href="c.html"><span class="m">C</span><h3>Журнал партий</h3><p>Страница как лист журнала обжарщика: каждый блок это запись с шапкой. Сорта как накладные, подписка как чек за месяц. Самый «рабочий» по ощущению.</p><p class="m">PT Serif · PT Sans · Roboto Mono</p><span class="go">Открыть →</span></a>
+ <a class="v" href="d.html"><span class="m">D</span><h3>Плакат с датой</h3><p>Гигантская дата обжарки на весь экран и штамп поверх. Самый смелый и громкий. Карточки разного цвета и характера, подписка с огромными «54».</p><p class="m">Unbounded · Manrope · JetBrains Mono</p><span class="go">Открыть →</span></a>
+</div>
+
+<h2>Структура и зачем каждый блок</h2>
+<ol class="blocks">
+ <li><span class="n">01</span><div><b>Первый экран: дата ближайшей обжарки</b><span class="w">Человек из рекламы за 3 секунды должен понять, чем «Кварта» отличается: у нас есть конкретный день. Дата считается динамически (четверг: сегодня или ближайший), поэтому страница всегда живая. CTA сразу под заголовком.</span></div></li>
+ <li><span class="n">02</span><div><b>Почему свежесть: чт → пт → дни 1–3</b><span class="w">Три шага вместо лекции. Снимает вопрос «чем это лучше магазина» и подводит к цене. Без цифр, которых нет в брифе (про «пик на 5–7 день» у конкурентов спорно).</span></div></li>
+ <li><span class="n">03</span><div><b>Зерно: 3 сорта и дрип-пакеты</b><span class="w">Ноты, обжарка, цена, кнопка «Заказать» предвыбирает форму и подставляет сорт. Карточки разные по весу и характеру, чтобы не выглядело сеткой одинаковых плиток.</span></div></li>
+ <li><span class="n">04</span><div><b>Подписка как главный оффер</b><span class="w">54 BYN, 2 × 250 г, доставка бесплатна. Выгода считается калькулятором на реальных ценах: для пары Эфиопия + Колумбия экономия 7 BYN в месяц, для двух Бразилий подписка дороже на 2 BYN, и страница так прямо и пишет. Скидок не выдумываем.</span></div></li>
+ <li><span class="n">05</span><div><b>Аня и Дмитрий</b><span class="w">Два-три предложения и фото ростера: за небольшой мастерской стоят люди. Здесь нет «отзывов» с выдуманными именами.</span></div></li>
+ <li><span class="n">06</span><div><b>Доставка и самовывоз</b><span class="w">Пятница, бесплатно от 50 BYN, адрес и часы таблицей. Здесь снимаются бытовые возражения.</span></div></li>
+ <li><span class="n">07</span><div><b>Форма</b><span class="w">Имя, телефон +375, тип заявки, комментарий. Состояния: подсказка формата, понятные ошибки номера, загрузка, успех со временем звонка (по часам работы), сбой с запасным путём (телефон, адрес).</span></div></li>
+</ol>
+
+<h2>Что не меняется между макетами</h2>
+<ul class="rules">
+ <li>Палитра: бумага, тёмно-кофейный, один красно-оранжевый штемпельный. Без градиентов, эмодзи, блобов и стеклянных эффектов.</li>
+ <li>Анимация одна: штамп с датой, и она отключается при prefers-reduced-motion.</li>
+ <li>Фото ростера пока заглушка: подберём из Unsplash для выбранного макета.</li>
+ <li>Телефон +375 29 000-00-00 и час звонка менеджера — допущения для макета.</li>
+</ul>
+
+<h2>Допущения по сортам</h2>
+<table class="tbl"><tr><th>Позиция</th><th>В брифе</th><th>Моё допущение</th></tr>
+<tr><td>Колумбия Уила</td><td>обжарка не указана</td><td>средняя</td></tr>
+<tr><td>Бразилия Серрадо</td><td>«под эспрессо»</td><td>средне-тёмная</td></tr>
+<tr><td>Подписка</td><td>2 пачки по 250 г</td><td>сорта выбирает клиент, цена одна</td></tr>
+<tr><td>Доставка менее 50 BYN</td><td>не указана</td><td>«менеджер назовёт стоимость»</td></tr></table>
+</main></body></html>
