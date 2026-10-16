@@ -25,9 +25,9 @@ function fakeStore(opts: { saveThrows?: boolean; hitThrows?: boolean } = {}) {
   return { store, saved, keys };
 }
 
-const body = { name: 'Аня', phone: '+375 (29) 123-45-67', type: 'once', comment: '', source: { page: '/' } };
-const req = (b: unknown, raw?: string) =>
-  new Request('http://x/api/lead', { method: 'POST', body: raw ?? JSON.stringify(b), headers: { 'content-type': 'application/json' } });
+const body = { name: 'Аня', phone: '+375 (29) 713-45-68', type: 'once', comment: '', source: { page: '/' }, loadedAt: Date.now() - 60_000 };
+const req = (b: unknown, raw?: string, h: Record<string, string> = {}) =>
+  new Request('http://x/api/lead', { method: 'POST', body: raw ?? JSON.stringify(b), headers: { 'content-type': 'application/json', origin: 'http://x', ...h } });
 
 describe('handleLead', () => {
   test('валидная заявка: 200, save и notify по разу', async () => {
@@ -43,7 +43,7 @@ describe('handleLead', () => {
     const { store, saved } = fakeStore();
     const deps = { store, notify: async () => {} };
     await handleLead(req(body), deps);
-    const res = await handleLead(req({ ...body, phone: '80291234567' }), deps);
+    const res = await handleLead(req({ ...body, phone: '80297134568' }), deps);
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ ok: true, duplicate: true });
     expect(saved).toHaveLength(1);
@@ -89,5 +89,60 @@ describe('handleLead', () => {
     const { store } = fakeStore();
     const res = await handleLead(req(null, 'not json'), { store, notify: async () => {} });
     expect(res.status).toBe(400);
+  });
+
+  describe('защита от спама', () => {
+    const deps = () => ({ ...fakeStore(), notify: async () => {} });
+    test('не JSON по Content-Type: 415', async () => {
+      const { store } = deps();
+      expect((await handleLead(req(body, undefined, { 'content-type': 'text/plain' }), { store, notify: async () => {} })).status).toBe(415);
+    });
+    test('чужой Origin и отсутствие Origin: 403', async () => {
+      const { store } = deps();
+      expect((await handleLead(req(body, undefined, { origin: 'http://evil.com' }), { store, notify: async () => {} })).status).toBe(403);
+      const noOrigin = new Request('http://x/api/lead', { method: 'POST', body: JSON.stringify(body), headers: { 'content-type': 'application/json' } });
+      expect((await handleLead(noOrigin, { store, notify: async () => {} })).status).toBe(403);
+    });
+    test('тело больше лимита: 413', async () => {
+      const { store } = deps();
+      expect((await handleLead(req({ ...body, comment: 'a'.repeat(9000) }), { store, notify: async () => {} })).status).toBe(413);
+    });
+    test('форма заполнена быстрее 3 секунд: успех, заявки нет', async () => {
+      const { store, saved } = deps();
+      const res = await handleLead(req({ ...body, loadedAt: Date.now() - 500 }), { store, notify: async () => {} });
+      expect(res.status).toBe(200);
+      expect(saved).toHaveLength(0);
+    });
+    test('нет метки времени: заявки нет', async () => {
+      const { store, saved } = deps();
+      await handleLead(req({ ...body, loadedAt: undefined }), { store, notify: async () => {} });
+      expect(saved).toHaveLength(0);
+    });
+    test('капча не пройдена: 403, заявки нет', async () => {
+      const { store, saved } = deps();
+      const res = await handleLead(req(body), { store, notify: async () => {}, verifyHuman: async () => false });
+      expect(res.status).toBe(403);
+      expect(saved).toHaveLength(0);
+    });
+    test.each(['+375 (29) 111-11-11', '+375 (29) 234-56-78', '+375 (29) 121-21-21'])('фейковый номер %s: заявки нет', async (phone) => {
+      const { store, saved } = deps();
+      await handleLead(req({ ...body, phone }), { store, notify: async () => {} });
+      expect(saved).toHaveLength(0);
+    });
+    test.each(['Купите на http://spam.ru', 'пишите spam.xyz', 'казино онлайн'])('спам в комментарии «%s»: заявки нет', async (comment) => {
+      const { store, saved } = deps();
+      await handleLead(req({ ...body, comment }), { store, notify: async () => {} });
+      expect(saved).toHaveLength(0);
+    });
+    test('потолок 30 заявок в час: 31-я отклонена, алерт один раз', async () => {
+      const { store, saved } = deps();
+      const alerts: string[] = [];
+      const d = { store, notify: async () => {}, alert: async (t: string) => { alerts.push(t); } };
+      let last = 0;
+      for (let i = 0; i < 33; i++) last = (await handleLead(req({ ...body, phone: `+37529${String(1000000 + i * 7919).slice(0, 7)}`.replace(/(\d)\1{5}/, '$1') }), d)).status;
+      expect(saved.length).toBeLessThanOrEqual(30);
+      expect(last).toBe(429);
+      expect(alerts).toHaveLength(1);
+    });
   });
 });
