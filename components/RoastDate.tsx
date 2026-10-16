@@ -30,7 +30,7 @@ export function BatchLabel({ initial }: { initial: RoastInfo }) {
       <dl>
         <div><dt>Дата обжарки</dt><dd>{r.long}</dd></div>
         <div><dt>Вес партии</dt><dd>5 кг</dd></div>
-        <div><dt>Доставка</dt><dd>{r.fridm}, пт</dd></div>
+        <div><dt>Доставка</dt><dd>{r.fridLong}</dd></div>
       </dl>
     </div>
   );
