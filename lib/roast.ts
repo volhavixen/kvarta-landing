@@ -32,6 +32,7 @@ export function roastLabels(now: Date) {
     dm: dm(roast),
     long: `${roast.getUTCDate()} ${MONTHS[roast.getUTCMonth()]}`,
     fridm: dm(addDays(roast, 1)),
+    fridLong: `${addDays(roast, 1).getUTCDate()} ${MONTHS[addDays(roast, 1).getUTCMonth()]}`,
     batchNum: `${pad(isoWeek(roast))}-${String(roast.getUTCFullYear()).slice(2)}`,
     whenWord: diff === 0 ? 'сегодня' : diff === 1 ? 'завтра' : 'в четверг',
   };
