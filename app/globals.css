@@ -97,3 +97,5 @@ body{background:var(--paper)}
 @media(max-width:700px){.roasters-copy h3{font-size:29px}}
 @media(min-width:840px){.delivery-layout{grid-template-columns:2fr 1fr;align-items:center}.delivery-cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:28px}.delivery-cards article{min-height:205px;padding:26px}}
 @media(max-width:620px){.delivery-cards article{padding:20px}.work-hours>div{padding:15px 0}}
+.skip{position:absolute;left:-9999px;top:0;background:var(--ink);color:var(--light);padding:10px 14px;z-index:100}.skip:focus{left:8px;top:8px}
+a:focus-visible,button:focus-visible,select:focus-visible{outline:3px solid #d86b4d;outline-offset:2px}
