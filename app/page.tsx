@@ -6,6 +6,7 @@ import { Hero } from '@/components/Hero';
 import { LeadForm } from '@/components/LeadForm';
 import { Roasters } from '@/components/Roasters';
 import { Subscription } from '@/components/Subscription';
+import { ToTop } from '@/components/ToTop';
 import { roastLabels } from '@/lib/roast';
 
 export const revalidate = 600;
@@ -24,6 +25,7 @@ export default function Page() {
         <LeadForm roast={roast} />
       </main>
       <Footer />
+      <ToTop />
     </>
   );
 }
