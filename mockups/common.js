@@ -31,7 +31,7 @@
   var when = diff === 0 ? 'сегодня' : diff === 1 ? 'завтра' : 'в четверг';
 
   var map = {
-    date: long(roast), dm: short(roast), when: when,
+    date: short(roast), dm: short(roast), when: when,
     batch: '№ ' + pad(isoWeek(roast)) + '-' + String(roast.getFullYear()).slice(2),
     batchnum: pad(isoWeek(roast)) + '-' + String(roast.getFullYear()).slice(2),
     fri: long(add(roast, 1)), fridm: short(add(roast, 1)),
@@ -53,7 +53,7 @@
       dEl.textContent = (d > 0 ? '−' : d < 0 ? '+' : '') + Math.abs(d);
       root.setAttribute('data-calc-state', d > 0 ? 'save' : d < 0 ? 'more' : 'same');
       note.textContent = d > 0
-        ? 'Подписка дешевле на ' + d + ' BYN в месяц, это ' + d * 12 + ' BYN за год. Доставка бесплатна и так, и так: обе суммы выше 50 BYN.'
+        ? 'Экономия ' + d + ' BYN в месяц — ' + d * 12 + ' BYN за год. Бесплатная доставка действует для заказов от 50 BYN; стоимость доставки меньшего заказа уточнит менеджер.'
         : d === 0
           ? 'Цена одинаковая. Разница в том, что заказывать каждый месяц заново не нужно.'
           : 'С этой парой подписка дороже на ' + (-d) + ' BYN: цена у неё одна на любые сорта. Выгода здесь только в том, что не нужно каждый месяц оформлять заказ.';
@@ -149,7 +149,7 @@
   bar.setAttribute('style', 'font:12px/1.2 ui-monospace,Menlo,monospace;background:#1b1b1b;color:#ddd;padding:8px 12px;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;position:relative;z-index:99');
   var cur = (location.pathname.split('/').pop() || 'a.html').replace('.html', '');
   bar.innerHTML = '<a href="index.html" style="color:#9cf">структура</a>' +
-    ['a', 'b', 'c', 'd'].map(function (v) { return '<a href="' + v + '.html" style="color:' + (v === cur ? '#fff;font-weight:700' : '#999') + '">' + v.toUpperCase() + '</a>'; }).join('') +
+    ['a', 'b', 'c', 'd', 'combined'].map(function (v) { var label = v === 'combined' ? '2+3' : v.toUpperCase(); return '<a href="' + v + '.html" style="color:' + (v === cur ? '#fff;font-weight:700' : '#999') + '">' + label + '</a>'; }).join('') +
     '<label style="margin-left:auto;cursor:pointer"><input type="checkbox" id="kvfail"> имитировать сбой отправки</label>';
   document.body.insertBefore(bar, document.body.firstChild);
   var cb = $('#kvfail', bar);
