@@ -30,7 +30,7 @@ Next.js (App Router, TypeScript), один маршрут `POST /api/lead`. За
 - Стоимость доставки меньше 50 BYN называет менеджер.
 - Телефон мастерской `+375 29 000-00-00` — заглушка.
 
-- Lighthouse mobile на локальной production-сборке: Performance 94, Accessibility 100, Best Practices 100, SEO 100 (LCP 3,2 с, CLS 0). Отчёт: `docs/lighthouse/`. Замер на живом сайте — после деплоя.
+- Lighthouse mobile на локальной production-сборке: Performance 94, Accessibility 100, Best Practices 100, SEO 100 (LCP 3,2 с, CLS 0). Отчёт: `docs/lighthouse/`. Живой сайт (https://kvarta-landing-one.vercel.app/), mobile: Performance 98, Accessibility 100, Best Practices 100, SEO 100 (LCP 2,3 с, CLS 0). Отчёт: `docs/lighthouse/live-mobile.report.html`.
 - Фото ростера (`public/roaster.jpg`): Unsplash, [ссылка](https://unsplash.com/photos/two-sales-persons-working-with-coffee-in-the-coffee-shop-with-roaster-machine-on-the-background-gIZ2_HRbIl4). Лицензия Unsplash допускает бесплатное использование, указание автора не обязательно.
 - Заголовки на кириллице рисуются запасным шрифтом (Georgia): у DM Serif Display нет кириллицы, как и в макете.
 - Деплой, реальные Upstash и Telegram проверяются отдельно (см. ссылки ниже после публикации).
