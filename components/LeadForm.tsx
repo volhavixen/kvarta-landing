@@ -17,6 +17,7 @@ export function LeadForm({ roast }: { roast: RoastInfo }) {
   const [phoneError, setPhoneError] = useState('');
   const [comment, setComment] = useState('');
   const [name, setName] = useState('');
+  const [website, setWebsite] = useState('');
   const [done, setDone] = useState<Done | null>(null);
   const phoneRef = useRef<HTMLInputElement>(null);
   const busy = useRef(false);
@@ -42,7 +43,7 @@ export function LeadForm({ roast }: { roast: RoastInfo }) {
   }, []);
 
   const onPhone = (v: string) => {
-    const formatted = formatPhone(normalizePhone(v));
+    const formatted = formatPhone(normalizePhone(v).slice(0, 9));
     setPhone(formatted);
     if (phoneError) setPhoneError(checkPhone(formatted));
   };
@@ -66,7 +67,7 @@ export function LeadForm({ roast }: { roast: RoastInfo }) {
       const res = await fetch('/api/lead', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ name, phone, type, comment, source }),
+        body: JSON.stringify({ name, phone, type, comment, source, website }),
         signal: AbortSignal.timeout(10000),
       });
       if (!res.ok) throw new Error(String(res.status));
@@ -99,6 +100,10 @@ export function LeadForm({ roast }: { roast: RoastInfo }) {
         <form onSubmit={submit} noValidate data-state={state}>
           {(state === 'idle' || state === 'loading') && (
             <div>
+              <div aria-hidden="true" style={{ position: 'absolute', left: '-10000px', width: 1, height: 1, overflow: 'hidden' }}>
+                <label htmlFor="lead-website">Сайт</label>
+                <input id="lead-website" type="text" name="website" tabIndex={-1} autoComplete="off" value={website} onChange={(e) => setWebsite(e.target.value)} />
+              </div>
               <div className="field">
                 <label htmlFor="lead-name">Имя</label>
                 <input id="lead-name" type="text" name="name" autoComplete="given-name" value={name} onChange={(e) => setName(e.target.value)} maxLength={80} />

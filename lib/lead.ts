@@ -3,7 +3,7 @@ import { checkPhone, toE164 } from './phone';
 export const LEAD_TYPES = ['subscription', 'once', 'question'] as const;
 export type LeadType = (typeof LEAD_TYPES)[number];
 
-const SOURCE_KEYS = ['page', 'referrer', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'] as const;
+const SOURCE_KEYS = ['page', 'referrer', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'fbclid', 'yclid'] as const;
 export type Source = Record<(typeof SOURCE_KEYS)[number], string>;
 
 export type Lead = { name: string; phone: string; type: LeadType; comment: string; source: Source; createdAt: string };
@@ -43,7 +43,7 @@ const TYPE_LABEL: Record<LeadType, string> = { subscription: 'Подписка',
 
 export function formatTelegram(l: Lead): string {
   const s = l.source;
-  const utm = SOURCE_KEYS.filter((k) => k.startsWith('utm_') && s[k]).map((k) => `${k}: ${esc(s[k])}`);
+  const utm = SOURCE_KEYS.filter((k) => k !== 'page' && k !== 'referrer' && s[k]).map((k) => `${k}: ${esc(s[k])}`);
   return [
     `<b>Новая заявка: ${TYPE_LABEL[l.type]}</b>`,
     `Имя: ${esc(l.name) || '—'}`,
@@ -52,6 +52,6 @@ export function formatTelegram(l: Lead): string {
     '',
     `Страница: ${esc(s.page) || '—'}`,
     `Реферер: ${esc(s.referrer) || '—'}`,
-    utm.length ? utm.join('\n') : 'UTM: нет',
+    utm.length ? utm.join('\n') : 'Метки рекламы: нет',
   ].filter((x, i) => x !== '' || i === 4).join('\n');
 }
