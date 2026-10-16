@@ -7,6 +7,10 @@ import { readAttribution } from '@/lib/attribution';
 import { checkPhone, formatPhone, normalizePhone } from '@/lib/phone';
 import { RoastLong, type RoastInfo } from './RoastDate';
 
+const SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+type Turnstile = { render: (el: HTMLElement, o: Record<string, unknown>) => string; reset: (id?: string) => void };
+declare global { interface Window { turnstile?: Turnstile } }
+
 type State = 'idle' | 'loading' | 'success' | 'error';
 type Done = { name: string; phone: string; callback: string };
 
@@ -21,6 +25,32 @@ export function LeadForm({ roast }: { roast: RoastInfo }) {
   const [done, setDone] = useState<Done | null>(null);
   const phoneRef = useRef<HTMLInputElement>(null);
   const busy = useRef(false);
+  const loadedAt = useRef(Date.now());
+  const [token, setToken] = useState('');
+  const captchaEl = useRef<HTMLDivElement>(null);
+  const captchaId = useRef<string | undefined>(undefined);
+
+  // Cloudflare Turnstile: скрипт грузим один раз, виджет рисуем при показе формы.
+  const showForm = state === 'idle' || state === 'loading';
+  useEffect(() => {
+    if (!SITE_KEY || !showForm) return;
+    const draw = () => {
+      if (!captchaEl.current || !window.turnstile) return;
+      captchaId.current = window.turnstile.render(captchaEl.current, {
+        sitekey: SITE_KEY, appearance: 'interaction-only', callback: setToken,
+        'expired-callback': () => setToken(''), 'error-callback': () => setToken(''),
+      });
+    };
+    if (window.turnstile) return draw();
+    let s = document.querySelector<HTMLScriptElement>('script[data-turnstile]');
+    if (!s) {
+      s = Object.assign(document.createElement('script'), { src: 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit', async: true });
+      s.dataset.turnstile = '1';
+      document.head.append(s);
+    }
+    s.addEventListener('load', draw);
+    return () => s.removeEventListener('load', draw);
+  }, [showForm]);
 
   useEffect(() => {
     try {
@@ -67,7 +97,7 @@ export function LeadForm({ roast }: { roast: RoastInfo }) {
       const res = await fetch('/api/lead', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ name, phone, type, comment, source, website }),
+        body: JSON.stringify({ name, phone, type, comment, source, website, loadedAt: loadedAt.current, turnstileToken: token }),
         signal: AbortSignal.timeout(10000),
       });
       if (!res.ok) throw new Error(String(res.status));
@@ -77,6 +107,7 @@ export function LeadForm({ roast }: { roast: RoastInfo }) {
       setState('error');
     } finally {
       busy.current = false;
+      if (SITE_KEY) { setToken(''); window.turnstile?.reset(captchaId.current); } // токен одноразовый
     }
   }
 
@@ -98,7 +129,7 @@ export function LeadForm({ roast }: { roast: RoastInfo }) {
           </ul>
         </div>
         <form onSubmit={submit} noValidate data-state={state}>
-          {(state === 'idle' || state === 'loading') && (
+          {showForm && (
             <div>
               <div aria-hidden="true" style={{ position: 'absolute', left: '-10000px', width: 1, height: 1, overflow: 'hidden' }}>
                 <label htmlFor="lead-website">Сайт</label>
@@ -136,7 +167,8 @@ export function LeadForm({ roast }: { roast: RoastInfo }) {
                 <label htmlFor="lead-comment">Комментарий</label>
                 <textarea id="lead-comment" name="comment" placeholder="Например: нужен кофе для фильтра" value={comment} onChange={(e) => setComment(e.target.value)} maxLength={1000} />
               </div>
-              <button className="btn submit" type="submit" disabled={state === 'loading'}>
+              {SITE_KEY && <div ref={captchaEl} />}
+              <button className="btn submit" type="submit" disabled={state === 'loading' || (!!SITE_KEY && !token)}>
                 {state === 'loading' ? 'Отправляем…' : 'Оставить заявку'}
               </button>
             </div>
