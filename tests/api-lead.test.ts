@@ -3,20 +3,23 @@ import { handleLead } from '@/lib/handle-lead';
 import type { Lead } from '@/lib/lead';
 import type { LeadStore } from '@/lib/store';
 
-function fakeStore(opts: { claimThrows?: boolean; saveThrows?: boolean } = {}) {
+function fakeStore(opts: { saveThrows?: boolean; hitThrows?: boolean } = {}) {
   const keys = new Set<string>();
   const saved: Lead[] = [];
+  const hits = new Map<string, number>();
   const store: LeadStore = {
-    async claim(key) {
-      if (opts.claimThrows) throw new Error('redis down');
+    async claimAndSave(key, _ttl, lead) {
+      if (opts.saveThrows) throw new Error('redis down');
       if (keys.has(key)) return false;
       keys.add(key);
+      saved.push(lead);
       return true;
     },
-    async release(key) { keys.delete(key); },
-    async save(lead) {
-      if (opts.saveThrows) throw new Error('redis down');
-      saved.push(lead);
+    async hit(key) {
+      if (opts.hitThrows) throw new Error('redis down');
+      const n = (hits.get(key) ?? 0) + 1;
+      hits.set(key, n);
+      return n;
     },
   };
   return { store, saved, keys };
@@ -45,16 +48,30 @@ describe('handleLead', () => {
     expect(await res.json()).toEqual({ ok: true, duplicate: true });
     expect(saved).toHaveLength(1);
   });
-  test('Redis недоступен: 502', async () => {
-    const { store } = fakeStore({ claimThrows: true });
-    const res = await handleLead(req(body), { store, notify: async () => {} });
-    expect(res.status).toBe(502);
-  });
-  test('сбой сохранения: 502 и ключ освобождён для повтора', async () => {
+  test('Redis недоступен: 502, заявка не создана', async () => {
     const { store, keys } = fakeStore({ saveThrows: true });
     const res = await handleLead(req(body), { store, notify: async () => {} });
     expect(res.status).toBe(502);
     expect(keys.size).toBe(0);
+  });
+  test('заполненная приманка: успех, но заявки нет', async () => {
+    const { store, saved } = fakeStore();
+    const res = await handleLead(req({ ...body, website: 'http://spam' }), { store, notify: async () => {} });
+    expect(res.status).toBe(200);
+    expect(saved).toHaveLength(0);
+  });
+  test('больше 10 запросов с одного IP: 429', async () => {
+    const { store } = fakeStore();
+    const deps = { store, notify: async () => {}, ip: '1.2.3.4' };
+    let last = 200;
+    for (let i = 0; i < 11; i++) last = (await handleLead(req({ ...body, phone: `+37529123456${i % 10}` }), deps)).status;
+    expect(last).toBe(429);
+  });
+  test('сбой счётчика не блокирует заявку', async () => {
+    const { store, saved } = fakeStore({ hitThrows: true });
+    const res = await handleLead(req(body), { store, notify: async () => {}, ip: '1.2.3.4' });
+    expect(res.status).toBe(200);
+    expect(saved).toHaveLength(1);
   });
   test('Telegram упал: заявка принята', async () => {
     const { store, saved } = fakeStore();

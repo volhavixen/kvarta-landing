@@ -5,7 +5,7 @@ export function normalizePhone(raw: string): string {
   let d = String(raw).replace(/\D/g, '');
   if (d.startsWith('375')) d = d.slice(3);
   else if (d.startsWith('80')) d = d.slice(2);
-  return d.slice(0, 9);
+  return d;
 }
 
 export function formatPhone(national: string): string {
@@ -25,6 +25,7 @@ export function checkPhone(raw: string): string {
   if (n.length >= 2 && !MOBILE.includes(p) && p !== MINSK) {
     return `Код «${p}» не белорусский. Мобильные начинаются с 25, 29, 33 или 44, минские городские — с 17.`;
   }
+  if (n.length > 9) return `Слишком много цифр: лишних ${n.length - 9}. Номер выглядит так: +375 29 123-45-67.`;
   if (n.length < 9) {
     const left = 9 - n.length;
     return `Не хватает ${left} ${left === 1 ? 'цифры' : 'цифр'}. Номер выглядит так: +375 29 123-45-67.`;

@@ -6,7 +6,7 @@ export const runtime = 'nodejs';
 
 export async function POST(req: Request) {
   try {
-    return await handleLead(req, { store: createStore(), notify: notifyTelegram });
+    return await handleLead(req, { store: createStore(), notify: notifyTelegram, ip: req.headers.get('x-forwarded-for')?.split(',')[0].trim() });
   } catch (e) {
     console.error('lead: unexpected', e);
     return Response.json({ ok: false }, { status: 502 });
