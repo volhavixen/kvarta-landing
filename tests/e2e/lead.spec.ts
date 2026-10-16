@@ -10,7 +10,7 @@ const submit = (page: import('@playwright/test').Page) => page.getByRole('button
 test('неверный номер: подсказка, запроса нет', async ({ page }) => {
   let requests = 0;
   await page.route('**/api/lead', (r) => { requests++; r.fulfill({ json: { ok: true } }); });
-  await fill(page, '22123');
+  await fill(page, '99123');
   await submit(page).click();
   await expect(page.locator('#lead-phone-error')).toContainText('не белорусский');
   expect(requests).toBe(0);

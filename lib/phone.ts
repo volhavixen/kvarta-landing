@@ -1,4 +1,5 @@
-const CODES = ['25', '29', '33', '44', '17'];
+const MOBILE = ['25', '29', '33', '44'];
+const MINSK = '17';
 
 export function normalizePhone(raw: string): string {
   let d = String(raw).replace(/\D/g, '');
@@ -20,8 +21,9 @@ export function formatPhone(national: string): string {
 export function checkPhone(raw: string): string {
   const n = normalizePhone(raw);
   if (!n) return 'Введите номер, чтобы менеджер мог перезвонить.';
-  if (n.length >= 2 && !CODES.includes(n.slice(0, 2))) {
-    return `Код «${n.slice(0, 2)}» не белорусский. Мобильные у нас начинаются с 25, 29, 33 или 44.`;
+  const p = n.slice(0, 2);
+  if (n.length >= 2 && !MOBILE.includes(p) && p !== MINSK) {
+    return `Код «${p}» не белорусский. Мобильные начинаются с 25, 29, 33 или 44, минские городские — с 17.`;
   }
   if (n.length < 9) {
     const left = 9 - n.length;

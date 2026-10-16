@@ -5,7 +5,7 @@ const base = { name: 'Аня', phone: '+375 (29) 123-45-67', type: 'subscription
 
 describe('parseLead', () => {
   test('неверный код → ошибка поля phone', () => {
-    const r = parseLead({ ...base, phone: '+375221234567' });
+    const r = parseLead({ ...base, phone: '+375991234567' });
     expect(r).toMatchObject({ ok: false, field: 'phone' });
   });
   test('неизвестный тип → ошибка поля type', () => {

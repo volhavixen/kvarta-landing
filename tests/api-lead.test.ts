@@ -64,7 +64,7 @@ describe('handleLead', () => {
   });
   test('неверный номер: 400 с field phone', async () => {
     const { store } = fakeStore();
-    const res = await handleLead(req({ ...body, phone: '+375221234567' }), { store, notify: async () => {} });
+    const res = await handleLead(req({ ...body, phone: '+375991234567' }), { store, notify: async () => {} });
     expect(res.status).toBe(400);
     expect(await res.json()).toMatchObject({ ok: false, field: 'phone' });
   });
